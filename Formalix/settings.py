@@ -134,8 +134,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# STATIC_URL = '/static/'
+# STATIC_ROOT = BASE_DIR / 'static/'
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
 # STATICFILES_DIRS = [
 #     BASE_DIR / "static",
 # ]
@@ -153,16 +156,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "image_upload")
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
 CKEDITOR_UPLOAD_SLUGIFY_FILENAME = False
-
+CKEDITOR_ALLOW_NONIMAGE_FILES = False
 CKEDITOR_CONFIGS = {
     'default': {
-        # 'toolbar': 'full',
-        # 'extraPlugins': ','.join(
-        #     [
-        #        'crossreference',
-        #     ]
-        # ),
+        'toolbar': [
+            ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo', 'Link', 'Unlink', 'Anchor', 'Image', 'Table', 'HorizontalRule', 'TextColor', 'BGColor', 'SpecialChar'],
+            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock', 'NumberedList','BulletedList', 'Maximize', 'Copy', 'EqnEditor', 'Print']
+        ],
+        'removePlugins': ','.join(['elementspath']),
+        'resize_enabled': False,
+        'extraPlugins': ','.join(
+            [
+               'autocomplete',
+               'crossreference',
+            ]
+        ),
         'width': '100%',
+        'height': '100%',
         'toolbarCanCollapse': True,
 
     },
