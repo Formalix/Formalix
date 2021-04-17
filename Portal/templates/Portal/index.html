@@ -1,0 +1,25 @@
+{% extends "Portal/header.html" %}
+
+{% block content %} 
+
+{% load crispy_forms_tags %}         
+
+<!--Register--> 
+<div class="container-fluid py-0">
+	<h1>Formalix</h1>
+	<form method="POST">
+		{% csrf_token %}
+		{% comment %} {{ register_form|crispy }}                     {% endcomment %}
+        {{document_form.media}}
+        {% comment %} {{document_form.as_p}} {% endcomment %}
+        {{document_form.content}}
+        <span></span>
+        <br/>
+        <br/>
+        <br />
+		<button class="btn btn-primary pull-right" type="submit">Process</button>
+	</form>
+</div>
+
+{% endblock %}
+
