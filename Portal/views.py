@@ -189,9 +189,9 @@ def get_completions(request):
         to_parse = find_between(html, "<p>---</p>", "<p>---</p>")
         if(to_parse[0] != ""):
             s = BeautifulSoup(to_parse[0], "html.parser")
-            to_complete = ''.join(s.find_all(text=True))
+            to_complete = ''.join(s.find_all(text=True)).replace("\n", ", ")
             openai.api_key = os.getenv("OPENAI_API_KEY")
-            pre_prompt = ''.join(["mount everest 8000m above see level\n",
+            """pre_prompt = ''.join(["mount everest 8000m above see level\n",
                             "lies in India and nepal\n",
                             "###\n", 
                             "Mount Everest is 8000m above sea level and spans across India and Nepal\n", 
@@ -210,9 +210,12 @@ def get_completions(request):
                             "1 year olds and apes similar", 
                             "###\n", 
                             "the first switch trial revealed that distributions match the error data. Comparison of frequencies of strategies adapted on trial 1 showed that distribution of first-choice strategy in older children differed significantly from those of 1-year-olds and apes, which were in turn very similar to each other.\n", 
-                            "###\n"])
+                            "###\n"])"""
+            pre_prompt = "Write a paragraph in academic style that includes the terms "
             print(pre_prompt)                                
-            test = openai.Completion.create(engine="davinci-instruct-beta", prompt= pre_prompt + to_complete + "\n###\n", max_tokens=400, temperature=0.3, stop="###", n=3)
+            #test = openai.Completion.create(engine="davinci-instruct-beta", prompt= pre_prompt + to_complete + "\n###\n", max_tokens=400, temperature=0.3, stop="###", n=3)
+            test = openai.Completion.create(engine="davinci-instruct-beta", prompt=pre_prompt + to_complete + ":\n",
+                                            max_tokens=150, temperature=0.3, top_p=1, frequency_penalty=.8, stop="\n", n=3)
             print(test)
             print('---------------')
             print(to_parse[1])
