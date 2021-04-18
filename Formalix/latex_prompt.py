@@ -15,8 +15,11 @@ $4 \\times x^{n} - 2 \\times 2^{x}$
 Write \"log of x base 4\" as a latex formula:
 $log_{4}({x})$
 
-Write "partial derivative of the nth root of x wrt x" as a latex formula:
+Write \"partial derivative of the nth root of x wrt x\" as a latex formula:
 $\\frac{\\partial}{\\partial x} (\\sqrt[n]{x})$
+
+Write \"derivative of the nth root of x wrt x\" as a latex formula:
+$\\frac{d}{dx} (\\sqrt[n]{x})$
 
 """
 
@@ -29,7 +32,10 @@ $\\frac{\\partial}{\\partial x} (\\sqrt[n]{x})$
 #user_input = "3x over y"
 #user_input = "natural logarithm of x"
 #user_input = "ln x"
-user_input = "log 4117 base 3"
+#user_input = "log 4117 base 3"
+#user_input = "derivative of f wrt x"
+#user_input = "integral of f wrt x"
+user_input = "integral from 0 to infinity of f wrt x"
 
 max_tokens = len(user_input)
 
