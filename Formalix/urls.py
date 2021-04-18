@@ -19,13 +19,17 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.static import serve
+from django.views.generic.base import TemplateView # new
 
 urlpatterns = [
+    path('/', include('landing.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('Portal/', include('Portal.urls')),
 
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'), # new
+
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

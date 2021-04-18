@@ -21,8 +21,11 @@ class NewUserForm(UserCreationForm):
 		return user
 
 class DocumentForm(forms.ModelForm):
-    
-    class Meta:
-        model = Document
-        fields = ("content",)
+	class Meta:
+		model = Document
+		fields = ("content", "title", "reference")
+		widgets = {
+			'reference': forms.Textarea(attrs={'rows':2, 'cols':15}),
+		}
+
 

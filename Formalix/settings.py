@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # 'userauth.apps.UserauthConfig'
     'Portal.apps.PortalConfig',
     'crispy_forms',
     'bootstrap4',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ckeditor',
+    'django_bootstrap_icons'
 ]
 
 MIDDLEWARE = [
@@ -169,6 +171,7 @@ CKEDITOR_CONFIGS = {
             [
                'autocomplete',
                'crossreference',
+               'autogrow',
             ]
         ),
         'width': '100%',
@@ -177,3 +180,7 @@ CKEDITOR_CONFIGS = {
 
     },
 }
+
+# config/settings.py
+LOGIN_REDIRECT_URL = '/Portal/'
+LOGOUT_REDIRECT_URL = '/' # new

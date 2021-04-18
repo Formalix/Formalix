@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% comment %} {% extends "Portal/header.html" %} {% endcomment %}
+
+{% block content %} 
+
+{% load crispy_forms_tags %}         
+
+<!--Register--> 
+
+<div class="container-fluid py-0" style="height:100%">
+    <form method="POST" style="height:100%">
+    
+    <div class="row" style="height:100%">
+        <div class="col-md-8" style="height:100%">
+            <div class="leftside" style="height:100%">
+                 
+                {% csrf_token %}
+                {% comment %} {{ register_form|crispy }}                     {% endcomment %}
+                {{document_form.media}}
+                {% comment %} {{document_form.as_p}} {% endcomment %}
+
+                {{document_form.title | as_crispy_field}}
+                    
+                {{document_form.content}}
+
+                {{document_form.reference | as_crispy_field}}
+                <script>
+                    String.prototype.extract = function(prefix, suffix) {
+                        s = this;
+                        var i = s.indexOf(prefix);
+                        if (i >= 0) {
+                            s = s.substring(i + prefix.length);
+                        }
+                        else {
+                            return '';
+                        }
+                        if (suffix) {
+                            i = s.indexOf(suffix);
+                            if (i >= 0) {
+                                s = s.substring(0, i);
+                            }
+                            else {
+                            return '';
+                            }
+                        }
+                        return s;
+                    };
+                    String.prototype.replaceBetween = function(start, end, what) {
+                        return this.substring(0, start) + what + this.substring(end);
+                    };
+                    $(document).ready(function() {
+                        $.ajaxSetup({ 
+                            beforeSend: function(xhr, settings) {
+                                function getCookie(name) {
+                                    var cookieValue = null;
+                                    if (document.cookie && document.cookie != '') {
+                                        var cookies = document.cookie.split(';');
+                                        for (var i = 0; i < cookies.length; i++) {
+                                            var cookie = jQuery.trim(cookies[i]);
+                                            // Does this cookie string begin with the name we want?
+                                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    return cookieValue;
+                                }
+                                if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                                    // Only send the token to relative URLs i.e. locally.
+                                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                               }
+                            } 
+                        });
+                        for (var instance in CKEDITOR.instances)
+                        console.log(instance)
+                        console.log(CKEDITOR.instances)
+                        console.log(CKEDITOR.instances['id_content'].getData())
+                        var COMPLETING = false
+                        CKEDITOR.instances['id_content'].on('change', function() { 
+                            var content = CKEDITOR.instances['id_content'].getData()
+                            console.log("content: ", content)
+                            var part = content.extract("<p>---</p>", "<p>---</p>")
+                            if(COMPLETING) {
+                                COMPLETING = false
+                                return
+                            }
+                            if(part !== "") {
+                                $.ajax({
+                                    url : "/Portal/get_completions/", // the endpoint
+                                    type : "POST", // http method
+                                    data : { content : content }, // data sent with the post request
+
+                                    // handle a successful response
+                                    success : function(json) {
+                                        console.log(json); // log the returned json to the console
+                                        console.log("success"); // another sanity check
+                                        $('#completion1').html(json['completion1'])
+                                        $('#completion1').removeClass('d-none')
+
+                                        if(json['completion2'] != json['completion1'] && json['completion2'] != json['completion3']) {
+                                            $('#completion2').html(json['completion2'])
+                                            $('#completion2').removeClass('d-none')
+                                        }
+                                            
+
+                                        if(json['completion3'] != json['completion1'] && json['completion3'] != json['completion2']) {
+                                            $('#completion3').html(json['completion3'])
+                                            $('#completion3').removeClass('d-none')
+                                        }
+
+                                        $('#completion1').click(function(){
+                                            $('#completion1').addClass('d-none')
+                                            $('#completion2').addClass('d-none')
+                                            $('#completion3').addClass('d-none')
+                                            content = CKEDITOR.instances['id_content'].getData()
+                                            COMPLETING = true
+                                            CKEDITOR.instances['id_content'].setData(content.replaceBetween(content.indexOf('<p>---</p>', 0), content.indexOf('<p>---</p>', content.indexOf('<p>---</p>', 0) + 1)+'<p>---</p>'.length, $('#completion1').html()))
+                                        })
+                                        $('#completion2').click(function(){
+                                            $('#completion1').addClass('d-none')
+                                            $('#completion2').addClass('d-none')
+                                            $('#completion3').addClass('d-none')
+                                            COMPLETING = true
+                                            content = CKEDITOR.instances['id_content'].getData()
+                                            CKEDITOR.instances['id_content'].setData(content.replaceBetween(content.indexOf('<p>---</p>', 0), content.indexOf('<p>---</p>', content.indexOf('<p>---</p>', 0) + 1)+'<p>---</p>'.length, $('#completion2').html()))
+                                        })
+                                        $('#completion3').click(function(){
+                                            $('#completion1').addClass('d-none')
+                                            $('#completion2').addClass('d-none')
+                                            $('#completion3').addClass('d-none')
+                                            COMPLETING = true
+                                            content = CKEDITOR.instances['id_content'].getData()
+                                            CKEDITOR.instances['id_content'].setData(content.replaceBetween(content.indexOf('<p>---</p>', 0), content.indexOf('<p>---</p>', content.indexOf('<p>---</p>', 0) + 1)+'<p>---</p>'.length, $('#completion2').html()))
+                                        })
+                                    },
+
+                                    // handle a non-successful response
+                                    error : function(xhr,errmsg,err) {
+                                        $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                                            " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                                        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    
+                </script>
+                {% comment %} <script>
+                    console.log(CKEDITOR)
+                </script> {% endcomment %}
+                <span></span>
+                {% comment %} <br/>
+                <br/> {% endcomment %}
+                <br />
+                <button class="btn btn-primary float-right" type="submit">Save</button>
+                <a href="/Portal/" class="btn btn-danger float-left">Cancel</a>
+                
+            
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="rightside">
+                <button class="btn btn-light w-75 p-3 d-none" name="completion1" type="button" id="completion1"></button>
+                <button class="btn btn-light w-75 p-3 d-none" name="completion2" type="button" id="completion2"></button>
+                <button class="btn btn-light w-75 p-3 d-none" name="completion3" type="button" id="completion3"></button>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+
+{% endblock %}
+

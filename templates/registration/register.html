@@ -1,0 +1,9 @@
+{%extends base.html’%}
+
+<form method='POST'>
+    {%csrf_token%}
+    {{form.media}}
+    {{form.media | crispy}}
+<button type='submit'>Submit</button>
+Already Have An Account? <a href="{% url 'login' %}">Login</a>
+</form>
